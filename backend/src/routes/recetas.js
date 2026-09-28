@@ -119,18 +119,19 @@ const esquemaValoracion = z.object({
 // ---------- Helpers ----------
 function construirWhere(f) {
   const where = { publicada: true };
+  // mode: 'insensitive' -> las búsquedas no distinguen mayúsculas (PostgreSQL sí lo hace por defecto)
   if (f.q) {
     where.OR = [
-      { titulo: { contains: f.q } },
-      { descripcion: { contains: f.q } },
-      { etiquetas: { contains: f.q } },
-      { categoria: { contains: f.q } },
-      { ingredientes: { some: { nombre: { contains: f.q } } } },
+      { titulo: { contains: f.q, mode: 'insensitive' } },
+      { descripcion: { contains: f.q, mode: 'insensitive' } },
+      { etiquetas: { contains: f.q, mode: 'insensitive' } },
+      { categoria: { contains: f.q, mode: 'insensitive' } },
+      { ingredientes: { some: { nombre: { contains: f.q, mode: 'insensitive' } } } },
     ];
   }
-  if (f.categoria && f.categoria !== 'all') where.categoria = f.categoria;
+  if (f.categoria && f.categoria !== 'all') where.categoria = { equals: f.categoria, mode: 'insensitive' };
   if (f.dificultad) where.dificultad = f.dificultad;
-  if (f.etiqueta) where.etiquetas = { contains: `"${f.etiqueta}"` };
+  if (f.etiqueta) where.etiquetas = { contains: `"${f.etiqueta}"`, mode: 'insensitive' };
   if (f.autorId) where.autorId = f.autorId;
   if (f.tiempoHasta != null || f.tiempoMasDe != null) {
     where.tiempoTotal = {

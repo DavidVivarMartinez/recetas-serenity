@@ -68,7 +68,7 @@ router.get('/categorias', async (req, res) => {
 router.get('/', validar(esquemaListado, 'query'), async (req, res) => {
   const { q, categoria, orden, page, limit } = req.datos.query;
   const where = {};
-  if (q) where.nombre = { contains: q };
+  if (q) where.nombre = { contains: q, mode: 'insensitive' }; // sin distinguir mayúsculas (PostgreSQL)
   if (categoria && categoria !== 'all') where.categoria = categoria;
 
   const [total, alimentos] = await Promise.all([
