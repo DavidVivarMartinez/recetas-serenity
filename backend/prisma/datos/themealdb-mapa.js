@@ -102,7 +102,8 @@ export const INGREDIENTES = {
   'turkey mince': ['Carne picada de pavo', null],
   duck: ['Pato', null],
   'duck legs': ['Muslos de pato', null],
-  goat meat: ['Carne de cabra', null],
+  'goat meat': ['Carne de cabra', null],
+  goat: ['Cabra', null],
   // Pescados y mariscos
   salmon: ['Salmón', 'Salmón'],
   'salmon fillets': ['Filetes de salmón', 'Salmón'],
