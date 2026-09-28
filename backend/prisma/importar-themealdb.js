@@ -181,7 +181,11 @@ function convertir(m, alimentosPorNombre, autorId) {
     etiquetas.add(ETIQUETAS[t] ?? t);
   }
 
-  const descripcion = `Receta ${cocinaEs ? cocinaEs.toLowerCase() + ' ' : ''}de ${categoriaEs.toLowerCase()} importada de TheMealDB. Las instrucciones están en su idioma original (inglés).`;
+  const esTipoDieta = ['Vegana', 'Vegetariana'].includes(categoriaEs);
+  const cocinaTxt = cocinaEs ? ` ${cocinaEs.toLowerCase()}` : '';
+  const descripcion = esTipoDieta
+    ? `Receta ${categoriaEs.toLowerCase()}${cocinaTxt} importada de TheMealDB. Las instrucciones están en su idioma original (inglés).`
+    : `Receta${cocinaTxt} de ${categoriaEs.toLowerCase()} importada de TheMealDB. Las instrucciones están en su idioma original (inglés).`;
 
   return {
     receta: {
