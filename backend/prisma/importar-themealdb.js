@@ -22,6 +22,7 @@ const args = Object.fromEntries(
 const LETRAS = String(args.letras || 'abcdefghijklmnopqrstuvwxyz').split('');
 const LIMITE = args.limite ? Number(args.limite) : Infinity;
 const FORZAR = Boolean(args.forzar);
+const CONCURRENCIA = Math.max(1, Number(args.concurrencia || 8)); // recetas procesadas a la vez
 
 // ---------- descarga ----------
 async function descargar(url) {
@@ -231,50 +232,75 @@ async function main() {
   let ingredientesEnlazados = 0;
   const sinTraducir = new Map();
 
+  // 1) Descargar la lista completa (una petición por letra)
+  const recetasOrigen = [];
   for (const letra of LETRAS) {
-    if (vistas >= LIMITE) break;
+    if (recetasOrigen.length >= LIMITE) break;
     const datos = await descargar(`${BASE}/search.php?f=${letra}`);
     for (const m of datos.meals ?? []) {
-      if (vistas >= LIMITE) break;
-      vistas++;
-
-      const existente = await prisma.receta.findUnique({
-        where: { fuente_fuenteId: { fuente: FUENTE, fuenteId: m.idMeal } },
-        select: { id: true },
-      });
-      if (existente && !FORZAR) {
-        saltadas++;
-        continue;
-      }
-
-      const { receta, ingredientes, pasos } = convertir(m, alimentosPorNombre, autor.id);
-      totalIngredientes += ingredientes.length;
-      ingredientesEnlazados += ingredientes.filter((i) => i.alimentoId).length;
-      for (let i = 1; i <= 20; i++) {
-        const n = (m[`strIngredient${i}`] || '').trim().toLowerCase();
-        if (n && !INGREDIENTES[n] && !INGREDIENTES[n.replace(/s$/, '')] && !INGREDIENTES[`${n}s`]) {
-          sinTraducir.set(n, (sinTraducir.get(n) ?? 0) + 1);
-        }
-      }
-
-      if (existente) {
-        await prisma.$transaction([
-          prisma.recetaIngrediente.deleteMany({ where: { recetaId: existente.id } }),
-          prisma.paso.deleteMany({ where: { recetaId: existente.id } }),
-          prisma.receta.update({
-            where: { id: existente.id },
-            data: { ...receta, ingredientes: { create: ingredientes }, pasos: { create: pasos } },
-          }),
-        ]);
-        actualizadas++;
-      } else {
-        await prisma.receta.create({
-          data: { ...receta, ingredientes: { create: ingredientes }, pasos: { create: pasos } },
-        });
-        creadas++;
-      }
-      if ((creadas + actualizadas) % 50 === 0) console.log(`  ... ${creadas + actualizadas} recetas procesadas`);
+      if (recetasOrigen.length >= LIMITE) break;
+      recetasOrigen.push(m);
     }
+  }
+  console.log(`Recetas encontradas en TheMealDB: ${recetasOrigen.length}. Procesando de ${CONCURRENCIA} en ${CONCURRENCIA}...`);
+
+  // 2) Procesar cada receta (varias a la vez)
+  async function procesar(m) {
+    vistas++;
+    const existente = await prisma.receta.findUnique({
+      where: { fuente_fuenteId: { fuente: FUENTE, fuenteId: m.idMeal } },
+      select: { id: true },
+    });
+    if (existente && !FORZAR) {
+      saltadas++;
+      return;
+    }
+
+    const { receta, ingredientes, pasos } = convertir(m, alimentosPorNombre, autor.id);
+    totalIngredientes += ingredientes.length;
+    ingredientesEnlazados += ingredientes.filter((i) => i.alimentoId).length;
+    for (let i = 1; i <= 20; i++) {
+      const n = (m[`strIngredient${i}`] || '').trim().toLowerCase();
+      if (n && !INGREDIENTES[n] && !INGREDIENTES[n.replace(/s$/, '')] && !INGREDIENTES[`${n}s`]) {
+        sinTraducir.set(n, (sinTraducir.get(n) ?? 0) + 1);
+      }
+    }
+
+    if (existente) {
+      await prisma.$transaction([
+        prisma.recetaIngrediente.deleteMany({ where: { recetaId: existente.id } }),
+        prisma.paso.deleteMany({ where: { recetaId: existente.id } }),
+        prisma.receta.update({
+          where: { id: existente.id },
+          data: { ...receta, ingredientes: { create: ingredientes }, pasos: { create: pasos } },
+        }),
+      ]);
+      actualizadas++;
+    } else {
+      await prisma.receta.create({
+        data: { ...receta, ingredientes: { create: ingredientes }, pasos: { create: pasos } },
+      });
+      creadas++;
+    }
+    if ((creadas + actualizadas) % 50 === 0) console.log(`  ... ${creadas + actualizadas} recetas guardadas`);
+  }
+
+  let siguiente = 0;
+  const errores = [];
+  const trabajador = async () => {
+    while (siguiente < recetasOrigen.length) {
+      const m = recetasOrigen[siguiente++];
+      try {
+        await procesar(m);
+      } catch (e) {
+        errores.push(`${m.idMeal} ${m.strMeal}: ${e.message}`);
+      }
+    }
+  };
+  await Promise.all(Array.from({ length: CONCURRENCIA }, trabajador));
+  if (errores.length) {
+    console.log(`\nRecetas con error (${errores.length}):`);
+    for (const e of errores.slice(0, 20)) console.log('  - ' + e);
   }
 
   console.log('\nResumen de la importación desde TheMealDB:');
