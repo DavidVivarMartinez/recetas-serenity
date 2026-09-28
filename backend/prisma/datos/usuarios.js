@@ -56,6 +56,24 @@ export const USUARIOS = [
     bio: null,
     avatarUrl: null,
   },
+  {
+    clave: 'adri',
+    nombre: 'Adri',
+    email: 'adri.mt@proton.me',
+    password: PASSWORD_INICIAL,
+    rol: 'usuario',
+    bio: null,
+    avatarUrl: null,
+  },
+  {
+    clave: 'funnycienta',
+    nombre: 'Funnycienta',
+    email: 'funnycienta@gmail.com',
+    password: PASSWORD_INICIAL,
+    rol: 'usuario',
+    bio: null,
+    avatarUrl: null,
+  },
 ];
 
 // Las recetas de ejemplo cuyo autor no exista se asignan a esta cuenta
