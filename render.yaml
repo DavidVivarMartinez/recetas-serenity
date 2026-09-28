@@ -1,0 +1,24 @@
+# Blueprint de Render: crea el servicio del backend a partir de este repositorio.
+# En Render: New > Blueprint > seleccionar el repo. Pedirá los valores marcados con sync: false.
+services:
+  - type: web
+    name: recetas-serenity-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    region: frankfurt
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/salud
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_EXPIRA
+        value: 7d
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false

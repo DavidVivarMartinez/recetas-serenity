@@ -1,0 +1,172 @@
+/* RecipeCoverflow.css - Carrusel 3D de recetas (Swiper, efecto coverflow) */
+
+.recipe-coverflow {
+  --cf-slide-height: 320px;
+  --cf-radius: 20px;
+  width: 100%;
+  padding: 1rem 0 0;
+}
+
+.recipe-coverflow .swiper {
+  width: 100%;
+  height: calc(var(--cf-slide-height) + 140px); /* slide + reflejo + paginación */
+  padding-top: 1rem;
+}
+
+/* Slide: la foto de la receta de fondo, con reflejo debajo */
+.recipe-coverflow .recipe-coverflow__slide {
+  position: relative;
+  height: var(--cf-slide-height);
+  border-radius: var(--cf-radius);
+  background-color: #1F2937;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  -webkit-box-reflect: below 24px linear-gradient(transparent, transparent, rgba(0, 0, 0, 0.25));
+}
+
+/* Degradado oscuro para que el texto se lea sobre cualquier foto */
+.recipe-coverflow .recipe-coverflow__slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.35) 0%, rgba(17, 24, 39, 0) 30%, rgba(17, 24, 39, 0) 45%, rgba(17, 24, 39, 0.85) 100%);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.recipe-coverflow .swiper-slide-active::before {
+  opacity: 1;
+}
+
+.recipe-coverflow .swiper-slide-shadow-left,
+.recipe-coverflow .swiper-slide-shadow-right {
+  border-radius: var(--cf-radius);
+}
+
+/* Contenido: solo visible en la slide central */
+.recipe-coverflow__top,
+.recipe-coverflow__content {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.recipe-coverflow__content {
+  padding: 0 1.25rem 1.5rem;
+  text-align: center;
+  color: #F9FAFB;
+  transform: translateY(12px);
+}
+
+.recipe-coverflow__top {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.recipe-coverflow .swiper-slide-active .recipe-coverflow__top,
+.recipe-coverflow .swiper-slide-active .recipe-coverflow__content {
+  opacity: 1;
+  transform: none;
+}
+
+.recipe-coverflow__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1F2937;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.recipe-coverflow__chip--rating svg {
+  color: #F9A826;
+}
+
+.recipe-coverflow__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #ffffff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+.recipe-coverflow__meta {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: #E5E7EB;
+}
+
+.recipe-coverflow__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Botón píldora con borde, como en el diseño */
+.recipe-coverflow__btn {
+  display: inline-block;
+  padding: 6px 26px;
+  border: 2px solid #F9FAFB;
+  border-radius: 32px;
+  background: transparent;
+  color: #F9FAFB;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+
+.recipe-coverflow__btn:hover {
+  background: #F9FAFB;
+  color: #1F2937;
+}
+
+.recipe-coverflow__btn:focus-visible {
+  outline: 2px solid #FF6B35;
+  outline-offset: 3px;
+}
+
+/* Paginación en naranja de marca (el fondo de la sección es claro) */
+.recipe-coverflow .swiper-pagination {
+  bottom: 34px !important;
+}
+
+.recipe-coverflow .swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background: #D1D5DB;
+  opacity: 1;
+}
+
+.recipe-coverflow .swiper-pagination-bullet-active {
+  background: #FF6B35;
+}
+
+@media (max-width: 640px) {
+  .recipe-coverflow {
+    --cf-slide-height: 280px;
+  }
+  .recipe-coverflow__title {
+    font-size: 1.15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recipe-coverflow__top,
+  .recipe-coverflow__content,
+  .recipe-coverflow .recipe-coverflow__slide::before {
+    transition: none;
+  }
+}

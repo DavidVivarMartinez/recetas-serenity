@@ -1,0 +1,133 @@
+/* NavbarTabs.css - Barra inferior flotante con burbuja activa elevada */
+
+.navbar-tabs {
+  --tabs-bg: #ffffff;
+  --tabs-icon: #374151;          /* gray-700 */
+  --tabs-bubble: #ea580c;        /* color-orange-600: icono blanco 3.6:1 */
+  --tabs-glow: rgba(255, 107, 53, 0.45); /* primary-orange */
+  --tabs-height: 64px;
+  --tabs-bubble-size: 56px;
+  --tabs-hump-size: 76px;
+  --tabs-rise: 26px;             /* cuánto sobresale la burbuja */
+
+  padding: calc(var(--tabs-rise) + 4px) 16px calc(12px + env(safe-area-inset-bottom));
+  font-family: 'Inter', sans-serif;
+  pointer-events: none;
+}
+
+.navbar-tabs--fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+}
+
+.navbar-tabs__bar {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--tabs-count), 1fr);
+  height: var(--tabs-height);
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--tabs-bg);
+  border-radius: 28px;
+  box-shadow: 0 10px 30px rgba(31, 41, 55, 0.12), 0 2px 6px rgba(31, 41, 55, 0.06);
+  pointer-events: auto;
+}
+
+/* Indicador que se desliza hasta la pestaña activa */
+.navbar-tabs__indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / var(--tabs-count));
+  height: 100%;
+  transform: translateX(calc(100% * var(--tabs-active)));
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+/* Joroba blanca: continúa la barra alrededor de la burbuja */
+.navbar-tabs__hump {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--tabs-rise) * -1 - (var(--tabs-hump-size) - var(--tabs-bubble-size)) / 2);
+  width: var(--tabs-hump-size);
+  height: var(--tabs-hump-size);
+  margin-left: calc(var(--tabs-hump-size) / -2);
+  border-radius: 9999px;
+  background: var(--tabs-bg);
+}
+
+/* Burbuja de color */
+.navbar-tabs__bubble {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--tabs-rise) * -1);
+  width: var(--tabs-bubble-size);
+  height: var(--tabs-bubble-size);
+  margin-left: calc(var(--tabs-bubble-size) / -2);
+  border-radius: 9999px;
+  background: var(--tabs-bubble);
+  box-shadow:
+    0 10px 22px var(--tabs-glow),
+    inset 0 2px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Pestañas */
+.navbar-tabs__item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tabs-icon);
+  text-decoration: none;
+  border-radius: 20px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.navbar-tabs__icon {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
+}
+
+.navbar-tabs__item:hover .navbar-tabs__icon {
+  transform: translateY(-2px);
+}
+
+/* El icono activo sube dentro de la burbuja */
+.navbar-tabs__item--active {
+  color: #ffffff;
+}
+
+.navbar-tabs__item--active .navbar-tabs__icon,
+.navbar-tabs__item--active:hover .navbar-tabs__icon {
+  transform: translateY(calc(var(--tabs-bubble-size) / 2 - var(--tabs-rise) - var(--tabs-height) / 2));
+}
+
+.navbar-tabs__item:focus-visible {
+  outline: 2px solid #3A7CA5;
+  outline-offset: -4px;
+}
+
+/* Solo en móvil */
+@media (min-width: 769px) {
+  .navbar-tabs--mobile-only {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-tabs__indicator,
+  .navbar-tabs__icon {
+    transition: none;
+  }
+}
+
+/* Deja hueco al final de la página para que la barra fija no tape el footer */
+@media (max-width: 768px) {
+  body:has(.navbar-tabs--fixed) {
+    padding-bottom: 110px;
+  }
+}

@@ -1,0 +1,21 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+.env.local
+
+# Base de datos local (SQLite)
+backend/prisma/*.db
+backend/prisma/*.db-journal
+
+# Compilados y logs
+frontend/dist/
+*.log
+
+# Editores / sistema
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db

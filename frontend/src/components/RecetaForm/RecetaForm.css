@@ -1,0 +1,70 @@
+.receta-form section {
+  margin-bottom: 2.25rem;
+}
+
+.receta-form__seccion {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gray-800, #1F2937);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--gray-100, #F3F4F6);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.receta-form__seccion .form-hint {
+  font-weight: 400;
+}
+
+.vista-previa-imagen {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-top: 0.5rem;
+  border: 1px solid var(--gray-200, #E5E7EB);
+}
+
+.vista-previa-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+  border: 1px solid var(--gray-200, #E5E7EB);
+  background: #000;
+}
+
+.vista-previa-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.etiquetas-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form-grid--nutricion {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.receta-form__pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-top: 1px solid var(--gray-200, #E5E7EB);
+  padding-top: 1.5rem;
+}
+
+.fila-dinamica--paso .form-group:first-child {
+  gap: 0.5rem;
+}

@@ -1,0 +1,154 @@
+// Esquema de base de datos de Recetas Serenity
+// Base de datos: PostgreSQL (Neon en producción y en desarrollo).
+// DATABASE_URL se define en backend/.env (local) y en las variables de Render (producción).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- USUARIOS ----------
+model Usuario {
+  id            Int      @id @default(autoincrement())
+  nombre        String
+  email         String   @unique
+  passwordHash  String
+  rol           String   @default("usuario") // "usuario" | "admin"
+  avatarUrl     String?
+  bio           String?
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  recetas      Receta[]
+  favoritos    Favorito[]
+  valoraciones Valoracion[]
+}
+
+// ---------- RECETAS ----------
+model Receta {
+  id                Int     @id @default(autoincrement())
+  titulo            String
+  descripcion       String
+  imagenUrl         String?
+  videoUrl          String? // enlace a YouTube / Vimeo / otro
+  tiempoTotal       Int     // minutos
+  tiempoPreparacion Int?    // minutos
+  tiempoCoccion     Int?    // minutos
+  dificultad        String  // "Fácil" | "Medio" | "Difícil"
+  categoria         String
+  porciones         Int     @default(4)
+  etiquetas         String  @default("[]") // array JSON serializado (SQLite no tiene arrays)
+
+  // Valores nutricionales declarados por porción
+  calorias      Int?
+  proteinas     Float? // g
+  carbohidratos Float? // g
+  grasas        Float? // g
+  fibra         Float? // g
+  azucares      Float? // g
+  sodio         Float? // mg
+
+  // Denormalizado para ordenar y listar sin agregar cada vez
+  valoracionMedia Float @default(0)
+  numValoraciones Int   @default(0)
+
+  publicada     Boolean  @default(true)
+  autorId       Int
+  autor         Usuario  @relation(fields: [autorId], references: [id], onDelete: Cascade)
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  ingredientes RecetaIngrediente[]
+  pasos        Paso[]
+  favoritos    Favorito[]
+  valoraciones Valoracion[]
+
+  @@index([categoria])
+  @@index([dificultad])
+  @@index([autorId])
+  @@index([publicada, creadoEn])
+}
+
+model Paso {
+  id          Int     @id @default(autoincrement())
+  recetaId    Int
+  receta      Receta  @relation(fields: [recetaId], references: [id], onDelete: Cascade)
+  orden       Int
+  titulo      String?
+  descripcion String
+  tiempoMin   Int?    // minutos que lleva este paso
+  consejo     String?
+
+  @@unique([recetaId, orden])
+}
+
+// ---------- ALIMENTOS (tabla de referencia nutricional) ----------
+// Todos los valores son por 100 g (o 100 ml si unidadBase = "ml")
+model Alimento {
+  id              Int      @id @default(autoincrement())
+  nombre          String   @unique
+  categoria       String
+  unidadBase      String   @default("g") // "g" | "ml"
+  calorias        Float    // kcal
+  proteinas       Float    // g
+  carbohidratos   Float    // g
+  grasas          Float    // g
+  grasasSaturadas Float?   // g
+  fibra           Float?   // g
+  azucares        Float?   // g
+  sal             Float?   // g
+  creadoEn        DateTime @default(now())
+  actualizadoEn   DateTime @updatedAt
+
+  ingredientes RecetaIngrediente[]
+
+  @@index([categoria])
+}
+
+// Ingrediente de una receta. Puede enlazar con un Alimento (para calcular
+// nutrición) o ser solo texto libre si el alimento aún no está en la tabla.
+model RecetaIngrediente {
+  id         Int       @id @default(autoincrement())
+  recetaId   Int
+  receta     Receta    @relation(fields: [recetaId], references: [id], onDelete: Cascade)
+  alimentoId Int?
+  alimento   Alimento? @relation(fields: [alimentoId], references: [id], onDelete: SetNull)
+  nombre     String    // texto que se muestra ("Pechuga de pollo")
+  cantidad   Float?
+  unidad     String?   // g, ml, unidad, cucharada, cucharadita, taza, diente, al gusto...
+  nota       String?   // "picado fino", "2 filetes de 200 g"...
+  orden      Int       @default(0)
+
+  @@index([recetaId])
+  @@index([alimentoId])
+}
+
+// ---------- INTERACCIONES ----------
+model Favorito {
+  usuarioId Int
+  recetaId  Int
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  receta    Receta   @relation(fields: [recetaId], references: [id], onDelete: Cascade)
+  creadoEn  DateTime @default(now())
+
+  @@id([usuarioId, recetaId])
+}
+
+model Valoracion {
+  id            Int      @id @default(autoincrement())
+  usuarioId     Int
+  recetaId      Int
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  receta        Receta   @relation(fields: [recetaId], references: [id], onDelete: Cascade)
+  puntuacion    Int      // 1..5
+  comentario    String?
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@unique([usuarioId, recetaId])
+  @@index([recetaId])
+}
