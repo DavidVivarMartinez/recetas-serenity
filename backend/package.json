@@ -17,6 +17,7 @@
     "prisma:studio": "prisma studio",
     "db:seed": "node --env-file=.env prisma/seed.js",
     "db:usuarios": "node --env-file=.env prisma/sincronizar-usuarios.js",
+    "db:secuencias": "node --env-file=.env prisma/reajustar-secuencias.js",
     "db:reset": "prisma migrate reset --force"
   },
   "prisma": {

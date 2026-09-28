@@ -129,6 +129,14 @@ async function main() {
     }
   }
 
+  // Las recetas se insertan con id fijo; en PostgreSQL eso no avanza la secuencia
+  // del autoincremento, así que se reajusta para que las siguientes no choquen.
+  for (const tabla of ['Receta', 'Usuario', 'Alimento', 'Paso', 'RecetaIngrediente', 'Valoracion']) {
+    await prisma.$executeRawUnsafe(
+      `SELECT setval(pg_get_serial_sequence('"${tabla}"', 'id'), COALESCE((SELECT MAX(id) FROM "${tabla}"), 0) + 1, false)`,
+    );
+  }
+
   console.log('\nResumen de la semilla:');
   console.log(`  Usuarios:     ${Object.keys(usuarios).length}`);
   console.log(`  Alimentos:    ${Object.keys(alimentos).length}`);
