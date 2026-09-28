@@ -1,5 +1,6 @@
 // Semilla de datos.
 // Ejecutar: npm run db:seed   (borra y vuelve a crear usuarios, alimentos y recetas)
+import { randomBytes } from 'node:crypto';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { USUARIOS, AUTOR_POR_DEFECTO } from './datos/usuarios.js';
@@ -19,9 +20,15 @@ async function main() {
   await prisma.usuario.deleteMany();
 
   console.log('Creando usuarios...');
+  // Contraseña para las cuentas que no tengan una definida (SEED_PASSWORD ausente)
+  let passwordGenerada = null;
   const usuarios = {};
   const hashes = new Map();
   for (const u of USUARIOS) {
+    if (!u.password) {
+      passwordGenerada ??= randomBytes(9).toString('base64url');
+      u.password = passwordGenerada;
+    }
     if (!hashes.has(u.password)) hashes.set(u.password, await bcrypt.hash(u.password, 10));
     usuarios[u.clave] = await prisma.usuario.create({
       data: {
@@ -128,6 +135,10 @@ async function main() {
   console.log(`  Recetas:      ${RECETAS.length}`);
   console.log(`  Valoraciones: ${totalValoraciones}`);
   if (avisos) console.log(`  Avisos:       ${avisos} ingredientes sin alimento enlazado`);
+  if (passwordGenerada) {
+    console.log(`\nSEED_PASSWORD no estaba definida. Contraseña inicial generada para las cuentas: ${passwordGenerada}`);
+    console.log('Guárdala: no se volverá a mostrar.');
+  }
 }
 
 main()

@@ -1,5 +1,6 @@
-// Cuentas reales del proyecto. Contraseña inicial común (cámbiala desde "Mi perfil > Ajustes").
-export const PASSWORD_INICIAL = 'Serenity123';
+// Cuentas reales del proyecto. La contraseña inicial común se toma de SEED_PASSWORD (backend/.env);
+// si no está definida, la semilla genera una al azar y la muestra. Cambiable desde "Mi perfil > Ajustes".
+export const PASSWORD_INICIAL = process.env.SEED_PASSWORD || null;
 
 export const USUARIOS = [
   {

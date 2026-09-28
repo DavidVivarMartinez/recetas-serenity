@@ -34,9 +34,10 @@ También puedes arrancarlos por separado: `npm run dev:backend` y `npm run dev:f
 
 ### Cuentas
 
-Las cuentas las define `backend/prisma/datos/usuarios.js` y las crea `npm run db:seed`. Todas empiezan con la
-contraseña `Serenity123`; cada persona puede cambiarla desde "Mi perfil > Ajustes". La cuenta de David es
-administradora y es la autora de las recetas de ejemplo.
+Las cuentas las define `backend/prisma/datos/usuarios.js` y las crea `npm run db:seed`. La contraseña
+inicial se toma de la variable `SEED_PASSWORD` de `backend/.env`; si no está definida, la semilla genera una
+al azar y la muestra por pantalla. Cada persona puede cambiarla desde "Mi perfil > Ajustes". La primera
+cuenta es administradora y es la autora de las recetas de ejemplo.
 
 ## Qué hay en cada parte
 

@@ -29,8 +29,9 @@ Otros scripts: `npm start` (sin recarga), `npm run prisma:studio` (explorador vi
 
 ### Usuarios (tras `npm run db:seed`)
 
-Se crean las cuentas definidas en `prisma/datos/usuarios.js`, todas con la contraseña inicial `Serenity123`
-(cambiable desde el perfil). La primera es administradora y queda como autora de las recetas de ejemplo.
+Se crean las cuentas definidas en `prisma/datos/usuarios.js` con la contraseña inicial de la variable
+`SEED_PASSWORD` (si no existe, se genera una al azar y se imprime). Es cambiable desde el perfil. La primera
+cuenta es administradora y queda como autora de las recetas de ejemplo.
 La semilla borra y recrea todos los datos, así que no la ejecutes sobre una base con datos reales.
 
 ## Modelo de datos (`prisma/schema.prisma`)

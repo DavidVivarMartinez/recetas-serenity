@@ -30,28 +30,3 @@
   color: var(--primary-orange, #FF6B35);
   font-weight: 600;
 }
-
-.auth-demo {
-  margin-top: 1.5rem;
-  padding: 0.9rem 1rem;
-  background: var(--gray-50, #F9FAFB);
-  border: 1px dashed var(--gray-300, #D1D5DB);
-  border-radius: 10px;
-  font-size: 0.8rem;
-  color: var(--gray-600, #4B5563);
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.auth-demo strong {
-  color: var(--gray-800, #1F2937);
-}
-
-.auth-demo code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  background: #fff;
-  padding: 0.05rem 0.35rem;
-  border-radius: 4px;
-  border: 1px solid var(--gray-200, #E5E7EB);
-}

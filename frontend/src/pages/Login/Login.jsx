@@ -74,13 +74,6 @@ export default function Login() {
         <p className="auth-alt">
           ¿No tienes cuenta? <Link to="/registro" state={location.state}>Regístrate</Link>
         </p>
-
-        {import.meta.env.DEV && (
-          <div className="auth-demo">
-            <strong>Solo en desarrollo</strong>
-            <span>Contraseña inicial de las cuentas creadas por la semilla: <code>Serenity123</code></span>
-          </div>
-        )}
       </div>
     </div>
   );
