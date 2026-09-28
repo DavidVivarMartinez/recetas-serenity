@@ -75,6 +75,15 @@ export const USUARIOS = [
     bio: null,
     avatarUrl: null,
   },
+  {
+    clave: 'valentina',
+    nombre: 'Valentina Romero',
+    email: 'valentinaromero575@gmail.com',
+    password: PASSWORD_INICIAL,
+    rol: 'usuario',
+    bio: null,
+    avatarUrl: null,
+  },
 ];
 
 // Las recetas de ejemplo cuyo autor no exista se asignan a esta cuenta
