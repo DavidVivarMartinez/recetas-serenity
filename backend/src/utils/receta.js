@@ -112,6 +112,8 @@ export function formatearDetalle(r, usuario) {
       ? { id: miValoracion.id, puntuacion: miValoracion.puntuacion, comentario: miValoracion.comentario }
       : null,
     puedeEditar: Boolean(usuario && (usuario.id === r.autorId || usuario.rol === 'admin')),
+    fuente: r.fuente ?? null,
+    fuenteUrl: r.fuenteUrl ?? null,
   };
 }
 

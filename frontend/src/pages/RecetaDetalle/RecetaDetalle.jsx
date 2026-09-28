@@ -270,7 +270,15 @@ const RecetaDetalle = () => {
                 <div className="author-info">
                   <small>Receta de</small>
                   <Link to={esAutor ? '/perfil' : `/usuarios/${receta.autor.id}`}>{receta.autor.nombre}</Link>
-                  <small>Publicada el {formatearFecha(receta.creadoEn)}</small>
+                  <small>
+                    Publicada el {formatearFecha(receta.creadoEn)}
+                    {receta.fuente === 'themealdb' && receta.fuenteUrl && (
+                      <>
+                        {' · '}Importada de{' '}
+                        <a href={receta.fuenteUrl} target="_blank" rel="noopener noreferrer">TheMealDB</a>
+                      </>
+                    )}
+                  </small>
                 </div>
               </section>
             )}

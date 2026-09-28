@@ -63,11 +63,17 @@ model Receta {
   creadoEn      DateTime @default(now())
   actualizadoEn DateTime @updatedAt
 
+  // Origen de las recetas importadas (p. ej. "themealdb" + id del origen)
+  fuente    String?
+  fuenteId  String?
+  fuenteUrl String?
+
   ingredientes RecetaIngrediente[]
   pasos        Paso[]
   favoritos    Favorito[]
   valoraciones Valoracion[]
 
+  @@unique([fuente, fuenteId])
   @@index([categoria])
   @@index([dificultad])
   @@index([autorId])
