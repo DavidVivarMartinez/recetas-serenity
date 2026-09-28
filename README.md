@@ -79,8 +79,9 @@ con `npx prisma migrate deploy` (Render lo hace en cada despliegue).
 
 ## Despliegue
 
+- **API en producción**: https://recetas-serenity-api.onrender.com/api (Render, región Ohio, plan gratuito).
 - **Frontend**: Vercel, directorio raíz `frontend`, variable `VITE_API_URL` con la URL de la API
-  (`https://<servicio>.onrender.com/api`). `frontend/vercel.json` redirige todas las rutas a la SPA.
+  (`https://recetas-serenity-api.onrender.com/api`). `frontend/vercel.json` redirige todas las rutas a la SPA.
 - **Backend**: Render, definido en `render.yaml` (New > Blueprint). Variables: `DATABASE_URL` (Neon),
   `CORS_ORIGIN` (URL de Vercel; admite `*.vercel.app` para las previsualizaciones), `JWT_SECRET`
   (Render lo genera). El build ejecuta `prisma generate` y `prisma migrate deploy`.
